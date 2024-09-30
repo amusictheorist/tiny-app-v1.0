@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/amusictheorist/tiny-app/issues"
   },
-  "homepage": "https://github.com/amusictheorist/tiny-app#readme"
+  "homepage": "https://github.com/amusictheorist/tiny-app#readme",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
 }
