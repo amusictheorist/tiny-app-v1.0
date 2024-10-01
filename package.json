@@ -2,8 +2,9 @@
   "name": "tinyapp",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "express_server.js",
   "scripts": {
+    "start": "./node_modules/.bin/nodemon -L express_server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -11,7 +12,7 @@
     "url": "git+https://github.com/amusictheorist/tiny-app.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alexis a_millaresthomson@outlook.com",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/amusictheorist/tiny-app/issues"
@@ -20,5 +21,8 @@
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
