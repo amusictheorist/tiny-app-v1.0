@@ -8,20 +8,26 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <title>URL - TinyApp Example</title>
+    <title>Edit URL</title>
   </head>
 
   <body>
     <%- include("partials/_header") %>
     <div class="card text-center">
       <div class="card-header"></div>
+      <h1>Edit URL</h1>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
-        <p class="card-text">
-          Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
+        <p class="card-text">Short URL ID: <a href="/u/<%= id %>" target="_blank"><%= id %></a>
         </p>
       </div>
-      <div class="card-footer text-muted"></div>
+      <div class="card-footer text-muted">
+        <form method="POST" action="/urls/<%= id %>">
+          <label>New URL:</label>
+          <input name="longURL">
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </div>
     <!-- Bootstrap JS -->
     <script

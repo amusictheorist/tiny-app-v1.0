@@ -1,8 +1,9 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+const morgan = require("morgan");
 app.use(express.urlencoded({ extended: true}));
-
+app.use(morgan("dev"));
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -28,6 +29,13 @@ app.post("/urls", (req, res) => {
   const id = generateRandomString();
   urlDatabase[id] = longURL;
   res.redirect(`/urls/${id}`);
+});
+
+app.post("/urls/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const newLongURL = req.body.longURL;
+  urlDatabase[shortURL] = newLongURL;
+  res.redirect("/urls");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
