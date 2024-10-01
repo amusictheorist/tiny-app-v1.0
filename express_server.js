@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+app.use(express.urlencoded({ extended: true}));
 
 app.set("view engine", "ejs");
 
@@ -9,9 +10,27 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
-app.use(express.urlencoded({ extended: true}));
 
-function generateRandomString() {};
+function generateRandomString(length = 6) {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  
+  return result;
+};
+
+app.post("/urls", (req, res) => {
+  const longURL = req.body.longURL;
+  const id = generateRandomString();
+  urlDatabase[id] = longURL;
+  res.redirect(`/urls/${id}`);
+});
+
+
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -39,9 +58,14 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
+app.get("/u/:id", (req, res) => {
+  const id = req.params.id;
+  const longURL = urlDatabase[id];
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.status(404).send("Short URL not found!");
+  }
 });
 
 app.listen(PORT, () => {
