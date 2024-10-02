@@ -1,19 +1,23 @@
+// Setup
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const morgan = require("morgan");
+app.set("view engine", "ejs");
+
+// Middleware
 app.use(express.urlencoded({ extended: true}));
 app.use(morgan("dev"));
-app.set("view engine", "ejs");
 app.use(cookieParser());
 
+// Database
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
 
-
+// Random generator
 function generateRandomString(length = 6) {
   let result = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -26,12 +30,21 @@ function generateRandomString(length = 6) {
   return result;
 };
 
+// POST /login
 app.post("/login", (req, res) => {
   const username = req.body.username;
   res.cookie("username", username);
   res.redirect("/urls");
 });
 
+// POST /logout
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
+});
+
+
+// POST /urls
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   const id = generateRandomString();
@@ -39,6 +52,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
+// POST /urls/:id
 app.post("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
   const newLongURL = req.body.longURL;
@@ -46,21 +60,24 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
+// POST /urls/:id/delete
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
   res.redirect("/urls");
 });
 
-app.post("/logout", (req, res) => {
-  res.clearCookie("username");
-  res.redirect("/urls");
+// GET /register
+app.get("/register", (req, res) => {
+  res.render("/regiser");
 });
 
+// GET /
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+// GET /urls
 app.get("/urls", (req, res) => {
   const templateVars = {
     username: req.cookies["username"],
@@ -69,10 +86,12 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// GET /urls/new
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+// GET /urls/:id
 app.get("/urls/:id", (req, res) => {
   const id = req.params.id;
   const templateVars = {
@@ -83,10 +102,12 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// GET /hello
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+// GET /u/:id
 app.get("/u/:id", (req, res) => {
   const id = req.params.id;
   const longURL = urlDatabase[id];
@@ -97,6 +118,7 @@ app.get("/u/:id", (req, res) => {
   }
 });
 
+// LISTEN
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

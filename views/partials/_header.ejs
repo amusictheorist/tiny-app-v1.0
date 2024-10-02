@@ -19,9 +19,9 @@
          <% if (username) { %>
           <p class="nav-item nav-link">Welcome, <% username %>!</p>
           <form class="form-inline" method="POST" action="/logout">
-          <button class="btn btn-warning" type="submit">Login</button>
+          <button class="btn btn-warning" type="submit">Logout</button>
         </form>
-        <% else { %>
+        <% } else { %>
           <form class="form-inline" method="POST" action="/login">
             <input class="form-control mr-sm-2" name="username" placeholder="Username" type="text" required>
             <button class="btn btn-success" type="submit">Login</button>
