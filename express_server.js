@@ -43,7 +43,6 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
-
 // POST /urls
 app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
@@ -69,7 +68,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // GET /register
 app.get("/register", (req, res) => {
-  res.render("/regiser");
+  res.render("register");
 });
 
 // GET /
