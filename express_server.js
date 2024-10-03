@@ -20,12 +20,12 @@ const users = {
   "8lhz4a": {
     id: "8lhz4a",
     email: "a@a.com",
-    password: "1234"
+    password: 1234
   },
   "8ttlwv": {
     id: "8ttlwv",
     email: "b@b.com",
-    password: "5678"
+    password: 5678
   }
 };
 
@@ -60,7 +60,7 @@ app.post("/login", (req, res) => {
     return res.status(403).send("User not found. Please register to log in!");
   }
 
-  if (foundUser.password !== password) {
+  if (foundUser.password != password) {
     return res.status(403).send("Email or password incorrect. Please try again!");
   }
 
@@ -103,6 +103,10 @@ app.post("/register", (req, res) => {
 
 // POST /urls
 app.post("/urls", (req, res) => {
+  const userID = req.cookies["user_id"];
+  if (!userID) {
+    return res.status(403).send("You must be logged in to shorten a URL!");
+  }
   const longURL = req.body.longURL;
   const id = generateRandomString();
   urlDatabase[id] = longURL;
@@ -126,14 +130,24 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // GET /register
 app.get("/register", (req, res) => {
-  res.cookie("user_id", user.id);
-  res.render("register", {user: null});
+  const userID = req.cookies["user_id"];
+  let user = null;
+  if (userID) {
+    user = getUserByEmail(users, email);
+    return res.redirect("/urls");
+  }
+  res.render("register", { user });
 });
 
 // GET /login
 app.get("/login", (req, res) => {
-  res.cookie("user_id", user.id);
-  res.render("login", {user: null});
+  const userID = req.cookies["user_id"];
+  let user = null;
+  if (userID) {
+    user = getUserByEmail(users, email);
+    return res.redirect("/urls");
+  }
+    res.render("login", { user });
 });
 
 // GET /
@@ -143,7 +157,7 @@ app.get("/", (req, res) => {
 
 // GET /urls
 app.get("/urls", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.cookies["user_id"];
   const user = users[userID];
   if (!user) {
     return res.status(400).send("Please log in first!");
@@ -158,7 +172,7 @@ app.get("/urls/new", (req, res) => {
   const userID = req.cookies.user_id;
   const user = users[userID];
   if (!user) {
-    return res.status(400).send("Please log in first!");
+    return res.redirect("/login");
   }
 
   res.render("urls_new", {user});
@@ -166,10 +180,10 @@ app.get("/urls/new", (req, res) => {
 
 // GET /urls/:id
 app.get("/urls/:id", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.cookies["user_id"];
   const user = users[userID];
   if (!user) {
-    return res.status(400).send("Please log in first!");
+    return res.status(403).send("Please log in first!");
   }
     
   const id = req.params.id;
