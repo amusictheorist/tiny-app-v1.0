@@ -79,7 +79,7 @@ app.post("/login", (req, res) => {
     return res.status(403).send("User not found. Please register to log in!");
   }
 
-  if (bcrypt.compareSync(password, hashedPassword) === false) {
+  if (bcrypt.compareSync(password, foundUser.password) === false) {
     return res.status(403).send("Email or password incorrect. Please try again!");
   }
 
@@ -113,7 +113,7 @@ app.post("/register", (req, res) => {
 
   const id = generateRandomString();
 
-  const user = { id, email, hashedPassword };
+  const user = { id, email, password: hashedPassword };
   users[id] = user;
   res.cookie("user_id", id);
   res.redirect("/urls");
