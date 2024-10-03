@@ -68,7 +68,6 @@ const urlsForUser = function(id) {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
   
   if (!email || !password) {
     return res.status(400).send("You must provide an email and a password!");
@@ -99,7 +98,6 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !password) {
     return res.status(400).send("You must provide an email and a password");
@@ -133,7 +131,7 @@ app.post("/urls", (req, res) => {
 
 // POST /urls/:id
 app.post("/urls/:id", (req, res) => {
-  const userID = req.cookies("user_id");
+  const userID = req.cookies["user_id"];
   if (!userID) {
     return res.status(401).send("Please log in first!");
   }
