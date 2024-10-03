@@ -126,11 +126,13 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // GET /register
 app.get("/register", (req, res) => {
+  res.cookie("user_id", user.id);
   res.render("register", {user: null});
 });
 
 // GET /login
 app.get("/login", (req, res) => {
+  res.cookie("user_id", user.id);
   res.render("login", {user: null});
 });
 
