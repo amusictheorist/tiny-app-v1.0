@@ -7,19 +7,20 @@
     <!--Bootstrap CSS-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous" />
-    <title>Register</title>
+    <title>Log in</title>
   </head>
 <body>
   <%- include("partials/_header") %>
-  <h1>Register here!</h1>
-  <p>Please enter a valid email and password</p>
+  <h1>Log in here!</h1>
+  <p>Please enter your email and password</p>
   <form method="POST" action="/register">
     <label>Email:</label>
     <input name="email" type="email" placeholder="email">
     <label>Password:</label>
     <input name="password" type="password" placeholder="password">
-    <button type="submit">Register!</button>
+    <button type="submit">Log in!</button>
   </form>
+  
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

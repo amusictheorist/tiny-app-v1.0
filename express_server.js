@@ -35,6 +35,17 @@ function generateRandomString() {
   return result;
 };
 
+// getUserByEmail
+const getUserByEmail = function(users, email) {
+  for (const userID in users) {
+    const user = users[userID];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+};
+
 // POST /login
 app.post("/login", (req, res) => {
   const username = req.body.username;
@@ -44,7 +55,7 @@ app.post("/login", (req, res) => {
 
 // POST /logout
 app.post("/logout", (req, res) => {
-  res.clearCookie("user");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
@@ -57,14 +68,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send("You must provide an email and a password");
   }
 
-  let foundUser = null;
-
-  for (const userID in users) {
-    const user = users[userID];
-    if (user.email === email) {
-      foundUser = user;
-    }
-  }
+  const foundUser = getUserByEmail(users, email);
 
   if (foundUser) {
     return res.status(400).send("Email already exists!");
@@ -109,6 +113,11 @@ app.post("/urls/:id/delete", (req, res) => {
 // GET /register
 app.get("/register", (req, res) => {
   res.render("register", {user: null});
+});
+
+// GET /login
+app.get("/login", (req, res) => {
+  res.render("login", {user: null});
 });
 
 // GET /
