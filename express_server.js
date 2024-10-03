@@ -1,6 +1,7 @@
 // Setup
 const cookieParser = require("cookie-parser");
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080; // default port 8080
 const morgan = require("morgan");
@@ -26,12 +27,12 @@ const users = {
   "8lhz4a": {
     id: "8lhz4a",
     email: "a@a.com",
-    password: 1234
+    password: "1234"
   },
   "8ttlwv": {
     id: "8ttlwv",
     email: "b@b.com",
-    password: 5678
+    password: "5678"
   }
 };
 
@@ -67,6 +68,7 @@ const urlsForUser = function(id) {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   
   if (!email || !password) {
     return res.status(400).send("You must provide an email and a password!");
@@ -77,12 +79,11 @@ app.post("/login", (req, res) => {
     return res.status(403).send("User not found. Please register to log in!");
   }
 
-  if (foundUser.password != password) {
+  if (bcrypt.compareSync(password, hashedPassword) === false) {
     return res.status(403).send("Email or password incorrect. Please try again!");
   }
 
   const id = foundUser.id;
-  console.log(id);
 
   res.cookie("user_id", id);
   res.redirect("/urls");
@@ -98,6 +99,7 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !password) {
     return res.status(400).send("You must provide an email and a password");
@@ -111,9 +113,8 @@ app.post("/register", (req, res) => {
 
   const id = generateRandomString();
 
-  const user = { id, email, password };
+  const user = { id, email, hashedPassword };
   users[id] = user;
-  console.log(users);
   res.cookie("user_id", id);
   res.redirect("/urls");
 });
@@ -126,7 +127,7 @@ app.post("/urls", (req, res) => {
   }
   const longURL = req.body.longURL;
   const id = generateRandomString();
-  urlDatabase[id].longURL = longURL;
+  urlDatabase[id] = { longURL, userID };
   res.redirect(`/urls/${id}`);
 });
 
