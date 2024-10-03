@@ -20,12 +20,12 @@ const users = {
   "8lhz4a": {
     id: "8lhz4a",
     email: "a@a.com",
-    password: 1234
+    password: "1234"
   },
   "8ttlwv": {
     id: "8ttlwv",
     email: "b@b.com",
-    password: 5678
+    password: "5678"
   }
 };
 
@@ -48,15 +48,33 @@ const getUserByEmail = function(users, email) {
 
 // POST /login
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie("username", username);
+  const email = req.body.email;
+  const password = req.body.password;
+  
+  if (!email || !password) {
+    return res.status(400).send("You must provide an email and a password!");
+  }
+  const foundUser = getUserByEmail(users, email);
+
+  if (!foundUser) {
+    return res.status(403).send("User not found. Please register to log in!");
+  }
+
+  if (foundUser.password !== password) {
+    return res.status(403).send("Email or password incorrect. Please try again!");
+  }
+
+  const id = foundUser.id;
+  console.log(id);
+
+  res.cookie("user_id", id);
   res.redirect("/urls");
 });
 
 // POST /logout
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 // POST /register
@@ -76,11 +94,7 @@ app.post("/register", (req, res) => {
 
   const id = generateRandomString();
 
-  const user = {
-    id: id,
-    email: email,
-    password: password
-  };
+  const user = { id, email, password };
   users[id] = user;
   console.log(users);
   res.cookie("user_id", id);
