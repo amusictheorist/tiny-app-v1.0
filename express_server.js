@@ -1,5 +1,5 @@
 // Setup
-const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const app = express();
@@ -10,7 +10,7 @@ app.set("view engine", "ejs");
 // Middleware
 app.use(express.urlencoded({ extended: true}));
 app.use(morgan("dev"));
-app.use(cookieParser());
+app.use(cookieSession({ name: "session", keys: ["dodecaphony"] }));
 
 // Database and users
 const urlDatabase = {
@@ -27,12 +27,12 @@ const users = {
   "8lhz4a": {
     id: "8lhz4a",
     email: "a@a.com",
-    password: "1234"
+    password: bcrypt.hashSync("1234", 10)
   },
   "8ttlwv": {
     id: "8ttlwv",
     email: "b@b.com",
-    password: "5678"
+    password: bcrypt.hashSync("5678", 10)
   }
 };
 
@@ -84,7 +84,7 @@ app.post("/login", (req, res) => {
 
   const id = foundUser.id;
 
-  res.cookie("user_id", id);
+  req.session.user_id = id;
   res.redirect("/urls");
 });
 
@@ -100,7 +100,7 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
 
   if (!email || !password) {
-    return res.status(400).send("You must provide an email and a password");
+    return res.status(400).send("You must provide an email and a password!");
   }
 
   const foundUser = getUserByEmail(users, email);
@@ -114,13 +114,13 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
   const user = { id, email, password: hashedPassword };
   users[id] = user;
-  res.cookie("user_id", id);
+  req.session.user_id = id;
   res.redirect("/urls");
 });
 
 // POST /urls
 app.post("/urls", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   if (!userID) {
     return res.status(403).send("You must be logged in to shorten a URL!");
   }
@@ -132,7 +132,7 @@ app.post("/urls", (req, res) => {
 
 // POST /urls/:id
 app.post("/urls/:id", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   if (!userID) {
     return res.status(401).send("Please log in first!");
   }
@@ -146,7 +146,7 @@ app.post("/urls/:id", (req, res) => {
 
 // POST /urls/:id/delete
 app.post("/urls/:id/delete", (req, res) => {
-  const userID = req.cookies("user_id");
+  const userID = req.session.user_id;
   if (!userID) {
     return res.status(401).send("Please log in first!");
   }
@@ -160,14 +160,14 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // GET /register
 app.get("/register", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   const user = userID ? users[userID] : null;
   res.render("register", { user });
 });
 
 // GET /login
 app.get("/login", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   const user = userID ? users[userID] : null;
   res.render("login", { user });
 });
@@ -179,7 +179,7 @@ app.get("/", (req, res) => {
 
 // GET /urls
 app.get("/urls", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   const user = userID ? users[userID] : null;
   const userURLs = urlsForUser(userID);
   const templateVars = { user, urls: userURLs };
@@ -188,7 +188,7 @@ app.get("/urls", (req, res) => {
 
 // GET /urls/new
 app.get("/urls/new", (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   const user = users[userID];
   if (!user) {
     return res.redirect("/login");
@@ -199,7 +199,7 @@ app.get("/urls/new", (req, res) => {
 
 // GET /urls/:id
 app.get("/urls/:id", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   if (!userID) {
     return res.status(401).send("Please log in first!");
   }
