@@ -1,5 +1,5 @@
 // Setup
-const { getUserByEmail, generateRandomString } = require("./helpers");
+const { getUserByEmail, generateRandomString, urlsForUser } = require("./helpers");
 const cookieSession = require("cookie-session");
 const express = require("express");
 const bcrypt = require("bcryptjs");
@@ -13,25 +13,25 @@ app.use(express.urlencoded({ extended: true}));
 app.use(morgan("dev"));
 app.use(cookieSession({ name: "session", keys: ["dodecaphony"] }));
 
-const urlsForUser = function(id) {
-  const userURLs = {};
-  for (const urlID in urlDatabase) {
-    if (urlDatabase[urlID].userID === id) {
-      userURLs[urlID] = urlDatabase[urlID];
-    }
-  }
-  return userURLs;
-};
+// const urlsForUser = function(id) {
+//   const userURLs = {};
+//   for (const urlID in urlDatabase) {
+//     if (urlDatabase[urlID].userID === id) {
+//       userURLs[urlID] = urlDatabase[urlID];
+//     }
+//   }
+//   return userURLs;
+// };
 
 // Database and users
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
-    userID: "aJ48lW",
+    userId: "aJ48lW",
   },
   i3BoGr: {
     longURL: "https://www.google.ca",
-    userID: "aJ48lW",
+    userId: "aJ48lW",
   },
 };
 const users = {
@@ -103,24 +103,24 @@ app.post("/register", (req, res) => {
 
 // POST /urls
 app.post("/urls", (req, res) => {
-  const userID = req.session.user_id;
-  if (!userID) {
+  const userId = req.session.user_id;
+  if (!userId) {
     return res.status(403).send("You must be logged in to shorten a URL!");
   }
   const longURL = req.body.longURL;
   const id = generateRandomString();
-  urlDatabase[id] = { longURL, userID };
+  urlDatabase[id] = { longURL, userId: userId };
   res.redirect(`/urls/${id}`);
 });
 
 // POST /urls/:id
 app.post("/urls/:id", (req, res) => {
-  const userID = req.session.user_id;
-  if (!userID) {
+  const userId = req.session.user_id;
+  if (!userId) {
     return res.status(401).send("Please log in first!");
   }
   const url = urlDatabase[req.params.id];
-  if (!url || url.userID !== userID) {
+  if (!url || url.userId !== userId) {
     return res.status(403).send("You do not have permission to edit this URL!");
   }
   urlDatabase[req.params.id].longURL = req.body.longURL;
@@ -129,12 +129,12 @@ app.post("/urls/:id", (req, res) => {
 
 // POST /urls/:id/delete
 app.post("/urls/:id/delete", (req, res) => {
-  const userID = req.session.user_id;
-  if (!userID) {
+  const userId = req.session.user_id;
+  if (!userId) {
     return res.status(401).send("Please log in first!");
   }
   const url = urlDatabase[req.params.id];
-  if (!url || url.userID !== userID) {
+  if (!url || url.userId !== userId) {
     return res.status(403).send("You do not have permission to delete this URL!");
   }
   delete urlDatabase[req.params.id];
@@ -162,9 +162,9 @@ app.get("/", (req, res) => {
 
 // GET /urls
 app.get("/urls", (req, res) => {
-  const userID = req.session.user_id;
-  const user = userID ? users[userID] : null;
-  const userURLs = urlsForUser(userID);
+  const userId = req.session.user_id;
+  const user = userId ? users[userId] : null;
+  const userURLs = urlsForUser(userId, urlDatabase);
   const templateVars = { user, urls: userURLs };
   res.render("urls_index", templateVars);
 });
@@ -177,7 +177,7 @@ app.get("/urls/new", (req, res) => {
     return res.redirect("/login");
   }
 
-  res.render("urls_new", {user});
+  res.render("urls_new", { user });
 });
 
 // GET /urls/:id
@@ -186,8 +186,9 @@ app.get("/urls/:id", (req, res) => {
   if (!userID) {
     return res.status(401).send("Please log in first!");
   }
+  const user = users[userID]
   const url = urlDatabase[req.params.id];
-  const templateVars = { id: req.params.id, longURL: url.longURL };
+  const templateVars = { user, id: req.params.id, longURL: url.longURL };
   res.render("urls_show", templateVars);
 });
 
