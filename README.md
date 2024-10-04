@@ -4,8 +4,10 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["Registration page allows a new user to create an account"](https://github.com/amusictheorist/tiny-app/blob/main/docs/registration-page.png?raw=true)
+!["Login page allows returning users to log back in or asks new users to register first"](https://github.com/amusictheorist/tiny-app/blob/main/docs/login-page.png?raw=true)
+!["Main page displays a user's saved and shortened URLs"](https://github.com/amusictheorist/tiny-app/blob/main/docs/urls-page.png?raw=true)
+!["Edit page allows user to edit one of their shortened URLs"](https://github.com/amusictheorist/tiny-app/blob/main/docs/edit-page.png?raw=true)
 
 ## Dependencies
 
