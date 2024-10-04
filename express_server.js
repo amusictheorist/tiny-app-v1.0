@@ -1,5 +1,5 @@
 // Setup
-const { getUserByEmail, urlsForUser, generateRandomString } = require("./helpers");
+const { getUserByEmail, generateRandomString } = require("./helpers");
 const cookieSession = require("cookie-session");
 const express = require("express");
 const bcrypt = require("bcryptjs");
@@ -12,6 +12,16 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true}));
 app.use(morgan("dev"));
 app.use(cookieSession({ name: "session", keys: ["dodecaphony"] }));
+
+const urlsForUser = function(id) {
+  const userURLs = {};
+  for (const urlID in urlDatabase) {
+    if (urlDatabase[urlID].userID === id) {
+      userURLs[urlID] = urlDatabase[urlID];
+    }
+  }
+  return userURLs;
+};
 
 // Database and users
 const urlDatabase = {
