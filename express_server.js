@@ -1,4 +1,5 @@
 // Setup
+const getUserByEmail = require("./helpers");
 const cookieSession = require("cookie-session");
 const express = require("express");
 const bcrypt = require("bcryptjs");
@@ -40,17 +41,6 @@ const users = {
 function generateRandomString() {
   let result = Math.random().toString(36).slice(2, 8);
   return result;
-};
-
-// getUserByEmail
-const getUserByEmail = function(users, email) {
-  for (const userID in users) {
-    const user = users[userID];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
 };
 
 // find URLs by user
