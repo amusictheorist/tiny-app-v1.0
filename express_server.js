@@ -1,5 +1,5 @@
 // Setup
-const getUserByEmail = require("./helpers");
+const { getUserByEmail, urlsForUser, generateRandomString } = require("./helpers");
 const cookieSession = require("cookie-session");
 const express = require("express");
 const bcrypt = require("bcryptjs");
@@ -35,23 +35,6 @@ const users = {
     email: "b@b.com",
     password: bcrypt.hashSync("5678", 10)
   }
-};
-
-// Random string generator
-function generateRandomString() {
-  let result = Math.random().toString(36).slice(2, 8);
-  return result;
-};
-
-// find URLs by user
-const urlsForUser = function(id) {
-  const userURLs = {};
-  for (const urlID in urlDatabase) {
-    if (urlDatabase[urlID].userID === id) {
-      userURLs[urlID] = urlDatabase[urlID];
-    }
-  }
-  return userURLs;
 };
 
 // POST /login
