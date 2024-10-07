@@ -1,3 +1,5 @@
+// helper functions to run TinyApp and express_server.js
+
 const getUserByEmail = function(users, email) {
   for (const userID in users) {
     const user = users[userID];
