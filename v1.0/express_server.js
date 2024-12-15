@@ -96,7 +96,7 @@ app.post("/logout", (req, res) => {
 // GET /urls: "home page," checks if user is logged in, rejects request if not, renders main page based on user object if login is successful
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
-  if (userId === null) {
+  if (!userId) {
     return res.status(401).send("Please log in first!");
   }
   const user = userId ? users[userId] : null;
@@ -140,21 +140,19 @@ app.get("/urls/:id", (req, res) => {
     return res.status(401).send("Please log in first!");
   }
 
-  // variables access user's data and urlsForUser gathers any previously saved URLs by user
   const user = users[userID];
-  const url = urlDatabase[req.params.id];
   const urlID = req.params.id;
-  const userURLs = urlsForUser(user.id, urlDatabase);
-  const userIDs = Object.keys(userURLs);
-  const templateVars = { user, id: urlID, longURL: url.longURL };
-  
-  // disallows logged in user from viewing short URLs not created by them
-  for (const id of userIDs) {
-    if (id === urlID) {
-      res.render("urls_show", templateVars);
-    } else {
-      return res.status(403).send("You do not have access to this short URL!");
-    }
+  const url = urlDatabase[urlID];
+  // check to see if URL exists, otherwise return 404
+  if (!url) {
+    return res.status(404).send("This URL does not exist!");
+  }
+  // render page if userId matches saved userId, otherwise return 403
+  if (url.userId === userID) {
+    const templateVars = { user, id: urlID, longURL: url.longURL };
+    res.render("urls_show", templateVars);
+  } else {
+    return res.status(403).send("You do not have access to this short URL!");
   }
 });
 
