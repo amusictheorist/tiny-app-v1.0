@@ -1,1 +1,15 @@
-node_modules
+# Ignore environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Log files
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# v2.0
+/v2.0
