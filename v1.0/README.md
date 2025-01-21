@@ -4,10 +4,10 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Registration page allows a new user to create an account"](https://github.com/amusictheorist/tiny-app/blob/main/docs/registration-page.png?raw=true)
-!["Login page allows returning users to log back in or asks new users to register first"](https://github.com/amusictheorist/tiny-app/blob/main/docs/login-page.png?raw=true)
-!["Main page displays a user's saved and shortened URLs"](https://github.com/amusictheorist/tiny-app/blob/main/docs/urls-page.png?raw=true)
-!["Edit page allows user to edit one of their shortened URLs"](https://github.com/amusictheorist/tiny-app/blob/main/docs/edit-page.png?raw=true)
+!["Registration page allows a new user to create an account"](https://github.com/amusictheorist/tiny-app-v1.0/blob/main/v1.0/docs/registration-page.png?raw=true)
+!["Login page allows returning users to log back in or asks new users to register first"](https://github.com/amusictheorist/tiny-app-v1.0/blob/main/v1.0/docs/login-page.png?raw=true)
+!["Main page displays a user's saved and shortened URLs"](https://github.com/amusictheorist/tiny-app-v1.0/blob/main/v1.0/docs/urls-page.png?raw=true)
+!["Edit page allows user to edit one of their shortened URLs"](https://github.com/amusictheorist/tiny-app-v1.0/blob/main/v1.0/docs/edit-page.png?raw=true)
 
 ## Dependencies
 
